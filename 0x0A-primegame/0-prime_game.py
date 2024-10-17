@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-"""Prime numbers."""
+"""Prime numbers"""
 
 
 def sieve_of_eratosthenes(n):
@@ -17,33 +17,26 @@ def sieve_of_eratosthenes(n):
 
 def isWinner(x, nums):
     """Determine the winner."""
+    if x < 1 or not nums:
+        return None
+
     max_n = max(nums)
     primes = sieve_of_eratosthenes(max_n)
+    prime_counts = [0] * (max_n + 1)
 
-    def play_game(n):
-        """Simulate a single game."""
-        game_nums = set(range(1, n + 1))
-        turn = 0
-
-        while True:
-            available_primes = [p for p in primes if p in game_nums]
-            if not available_primes:
-                return 'Ben' if turn == 0 else 'Maria'
-
-            prime = available_primes[0]
-            multiples_to_remove = set(range(prime, n + 1, prime))
-            game_nums -= multiples_to_remove
-            turn = 1 - turn
+    for i in range(1, max_n + 1):
+        prime_counts[i] = prime_counts[i - 1]
+        if i in primes:
+            prime_counts[i] += 1
 
     maria_wins = 0
     ben_wins = 0
 
     for n in nums:
-        winner = play_game(n)
-        if winner == 'Maria':
-            maria_wins += 1
-        else:
+        if prime_counts[n] % 2 == 0:
             ben_wins += 1
+        else:
+            maria_wins += 1
 
     if maria_wins > ben_wins:
         return 'Maria'
